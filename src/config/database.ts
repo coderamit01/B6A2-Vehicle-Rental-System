@@ -14,7 +14,7 @@ export const initDB = async () => {
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     email VARCHAR(40) UNIQUE NOT NULL CHECK (email = LOWER(email)),
-    password TEXT NOT NULL CHECK (LENGTH(password) > 6),
+    password TEXT NOT NULL,
     phone VARCHAR(15) NOT NULL,
     role VARCHAR(10) CHECK (role IN ('admin', 'customer')) DEFAULT 'customer',
     created_at TIMESTAMP DEFAULT NOW(),
