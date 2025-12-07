@@ -24,13 +24,14 @@ export const authAdmin = async (req: Request, res: Response, next: NextFunction)
     })
   }
   const role = req?.user?.role;
-  if (role !== 'admin') {
+  if (role === 'admin') {
+    next();
+  } else {
     res.status(401).json({
       success: false,
       message: "Admin Access Required"
     })
   }
-  next();
 }
 export const authAdminOrOwn = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
