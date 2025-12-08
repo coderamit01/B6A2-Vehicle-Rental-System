@@ -15,6 +15,7 @@
 
 - Node.js
 - Express.js
+- TypeScript
 - PostgreSQL
 - bcrypt (password security)
 - jsonwebtoken (authentication)
@@ -43,6 +44,13 @@ PORT=your_port_number
 npm run dev
 ```
 
+## API Endpoints
+
+URL Pattern: `/api/v1/example`
+
+Example: https://vehicle-rental-system-silk.vercel.app/api/v1/vehicles
+
+## Submission
 
 **GitHub Repo:** https://github.com/coderamit01/B6A2-Vehicle-Rental-System.git
 
