@@ -48,7 +48,24 @@ export const authAdminOrOwn = async (req: Request, res: Response, next: NextFunc
   } else {
     res.status(401).json({
       success: false,
-      message: "Access denied. You can only update your own profile"
+      message: "Access denied."
+    })
+  }
+}
+export const authAdminOrCustomer = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    res.status(401).json({
+      success: false,
+      message: "Admin Access Required"
+    })
+  }
+  const user = req?.user;
+  if (user?.role === 'admin' || user?.role === 'customer') {
+    next();
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "Access denied."
     })
   }
 }

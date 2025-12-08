@@ -16,8 +16,30 @@ const updateUser = async (payload: Record<string, unknown>, id: string) => {
 
   return result;
 }
+const deleteUser = async (userId:string) => {
+      const result = await pool.query(
+        'SELECT id, name, email FROM users WHERE id = $1',
+        [userId]
+      );
+
+      if (result.rows.length === 0) {
+        throw { status: 404, message: 'User not found' };
+      }
+
+      const bookingsResult = await pool.query(
+        `SELECT COUNT(*) as count FROM bookings 
+         WHERE customer_id = $1 AND status =$2`,
+        [userId,'active']
+      );
+
+      if (parseInt(bookingsResult.rows[0].count) > 0) {
+        throw { status: 400, message: 'Cannot delete user with active bookings' };
+      }
+
+      await pool.query('DELETE FROM users WHERE id = $1', [userId]);
+}
 
 
 export const userService = {
-  getUsers, updateUser
+  getUsers, updateUser, deleteUser
 }
