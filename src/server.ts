@@ -13,20 +13,20 @@ app.use(express.json());
 // Initialize Database 
 initDB();
 
-// Routes 
+// Authenticate Routes 
 app.use('/api/v1/auth', authRoute);
-
+// Users Routes 
 app.use('/api/v1',userRoute);
-
+// Vehicle Routes 
 app.use('/api/v1',vehicleRoute);
-
+// Bookings Routes 
 app.use('/api/v1',bookingRoute);
 
 
 
 
 app.get('/', (req:Request, res:Response) => {
-    res.send("Woo Server is on")
+    res.send("Woohoo! Server is on..")
 })
 
 app.listen(PORT, () => {

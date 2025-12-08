@@ -105,11 +105,10 @@ const allBooking = async (userInfo: Record<string, unknown>) => {
   return formattedData;
 }
 
-export const updateBooking = async (
+const updateBooking = async (
   bookingId: number,
   user: { id: number; role: string }
 ) => {
-  const { id: userId, role } = user;
   const today = new Date().toISOString().split("T")[0];
 
   const bookingRes = await pool.query(
@@ -117,13 +116,12 @@ export const updateBooking = async (
     [bookingId]
   );
 
-  if (!bookingRes.rowCount) {
+  if (bookingRes.rowCount === 0) {
     throw { status: 404, message: "Booking not found" };
   }
 
   const booking = bookingRes.rows[0];
-
-  /* ================= CUSTOMER ================= */
+  
   if (user.role === "customer") {
     if (booking.customer_id !== user.id) {
       throw { status: 403, message: "Unauthorized" };
@@ -138,17 +136,17 @@ export const updateBooking = async (
 
     const updated = await pool.query(
       `UPDATE bookings 
-       SET status='cancelled'
-       WHERE id=$1
+       SET status=$1
+       WHERE id=$2
        RETURNING *`,
-      [bookingId]
+      ['cancelled',bookingId]
     );
 
     await pool.query(
       `UPDATE vehicles 
-       SET availability_status='available'
-       WHERE id=$1`,
-      [booking.vehicle_id]
+       SET availability_status=$1
+       WHERE id=$2`,
+      ['available',booking.vehicle_id]
     );
 
     return {
@@ -157,22 +155,20 @@ export const updateBooking = async (
       data: updated.rows[0],
     };
   }
-
-  /* ================= ADMIN ================= */
   if (user.role === "admin") {
     const updated = await pool.query(
       `UPDATE bookings 
-       SET status='returned'
-       WHERE id=$1
+       SET status=$1
+       WHERE id=$2
        RETURNING *`,
-      [bookingId]
+      ['returned',bookingId]
     );
 
     await pool.query(
       `UPDATE vehicles 
-       SET availability_status='available'
-       WHERE id=$1`,
-      [booking.vehicle_id]
+       SET availability_status=$1
+       WHERE id=$2`,
+      ['available',booking.vehicle_id]
     );
 
     return {
@@ -184,10 +180,8 @@ export const updateBooking = async (
       },
     };
   }
-
   throw { status: 403, message: "Invalid role" };
 };
-
 
 
 export const bookingService = {
